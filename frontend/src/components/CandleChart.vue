@@ -26,6 +26,7 @@ let upper2: ISeriesApi<'Line'> | null = null
 let lower2: ISeriesApi<'Line'> | null = null
 let upper3: ISeriesApi<'Line'> | null = null
 let lower3: ISeriesApi<'Line'> | null = null
+let rEffLine: ISeriesApi<'Line'> | null = null
 let lastCandleData: { time: UTCTimestamp; open: number; high: number; low: number; close: number } | null = null
 
 function toSec(ms: number): UTCTimestamp {
@@ -82,6 +83,25 @@ function initChart() {
   // Band 3 — outer (3σ)
   upper3 = chart.addSeries(LineSeries, { color: BAND_3_COLOR, lineWidth: 1, lineStyle: 3 })
   lower3 = chart.addSeries(LineSeries, { color: BAND_3_COLOR, lineWidth: 1, lineStyle: 3 })
+
+  // R_t overlay — saját skálán, chart alsó 20%-ában
+  rEffLine = chart.addSeries(LineSeries, {
+    color: '#8866dd',
+    lineWidth: 1,
+    lineStyle: 0,
+    priceScaleId: 'r_eff',
+    lastValueVisible: true,
+    priceFormat: {
+      type: 'custom',
+      formatter: (val: number) => val.toExponential(1),
+    },
+  })
+
+  chart.priceScale('r_eff').applyOptions({
+    scaleMargins: { top: 0.8, bottom: 0 },
+    borderVisible: false,
+    autoScale: true,
+  })
 }
 
 function setLineData(series: ISeriesApi<'Line'> | null, data: { time: UTCTimestamp; value: number }[]) {
@@ -118,6 +138,7 @@ function loadSnapshot() {
   setLineData(lower2, toLine((k) => k.lower_2))
   setLineData(upper3, toLine((k) => k.upper_3))
   setLineData(lower3, toLine((k) => k.lower_3))
+  setLineData(rEffLine, toLine((k) => k.effective_r))
 
   chart?.timeScale().fitContent()
 }
@@ -146,6 +167,7 @@ watch(
       updateLine(lower2, t, msg.kalman.lower_2)
       updateLine(upper3, t, msg.kalman.upper_3)
       updateLine(lower3, t, msg.kalman.lower_3)
+      updateLine(rEffLine, t, msg.kalman.effective_r)
     }
 
     if (msg.type === 'tick' && lastCandleData) {
