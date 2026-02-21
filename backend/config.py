@@ -21,9 +21,9 @@ class Settings(BaseSettings):
     VOL_WINDOW: int = 21           # EMA ablak a log-volume statisztikához
     VOL_BETA: float = 0.7          # Moduláció erőssége (0 = kikapcsolt)
     VOL_Z_MAX: float = 3.0         # Z-score clamp határ
-    R_MIN_MULT: float = 0.2        # R_t alsó korlát szorzó
-    R_MAX_MULT: float = 5.0        # R_t felső korlát szorzó
-    VOL_SMOOTH: int = 10           # Z-score EMA simítás periódusa (1 = nincs simítás)
+    R_MIN_MULT: float = 0.1        # R_t alsó korlát szorzó
+    R_MAX_MULT: float = 10.0        # R_t felső korlát szorzó
+    VOL_SMOOTH: int = 25           # Z-score EMA simítás periódusa (1 = nincs simítás)
     VOL_EPS: float = 1e-12         # Numerikus védelem (variancia minimum)
 
     # Server
