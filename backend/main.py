@@ -27,6 +27,13 @@ kalman = KalmanFilter(
     k_band_1=settings.K_BAND_1,
     k_band_2=settings.K_BAND_2,
     k_band_3=settings.K_BAND_3,
+    vol_enabled=settings.VOL_ENABLED,
+    vol_window=settings.VOL_WINDOW,
+    vol_beta=settings.VOL_BETA,
+    vol_z_max=settings.VOL_Z_MAX,
+    r_min_mult=settings.R_MIN_MULT,
+    r_max_mult=settings.R_MAX_MULT,
+    vol_eps=settings.VOL_EPS,
 )
 store = CandleStore(kalman=kalman, maxlen=settings.CANDLE_STORE_SIZE)
 connected_clients: set[WebSocket] = set()
@@ -133,6 +140,12 @@ async def get_config():
         "k_band_1": settings.K_BAND_1,
         "k_band_2": settings.K_BAND_2,
         "k_band_3": settings.K_BAND_3,
+        "vol_enabled": settings.VOL_ENABLED,
+        "vol_beta": settings.VOL_BETA,
+        "vol_window": settings.VOL_WINDOW,
+        "vol_z_max": settings.VOL_Z_MAX,
+        "r_min_mult": settings.R_MIN_MULT,
+        "r_max_mult": settings.R_MAX_MULT,
     }
 
 

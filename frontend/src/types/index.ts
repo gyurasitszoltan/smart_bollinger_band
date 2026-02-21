@@ -18,6 +18,8 @@ export interface KalmanResult {
   upper_3: number
   lower_3: number
   kalman_gain: number
+  effective_r: number
+  vol_z: number
 }
 
 export interface Snapshot {
@@ -30,6 +32,9 @@ export interface Snapshot {
   k_band_1: number
   k_band_2: number
   k_band_3: number
+  vol_enabled: boolean
+  vol_beta: number
+  vol_window: number
 }
 
 export type WsMessage =

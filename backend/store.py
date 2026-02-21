@@ -25,7 +25,7 @@ class CandleStore:
             logger.debug("Duplicate candle skipped: %d", candle.timestamp)
             return None
 
-        result = self.kalman.update(candle.timestamp, candle.close)
+        result = self.kalman.update(candle.timestamp, candle.close, candle.volume)
         self.candles.append(candle)
         self.kalman_results.append(result)
         return result
@@ -37,7 +37,7 @@ class CandleStore:
         self.kalman.initialize(candles[0].close)
 
         for candle in candles:
-            result = self.kalman.update(candle.timestamp, candle.close)
+            result = self.kalman.update(candle.timestamp, candle.close, candle.volume)
             self.candles.append(candle)
             self.kalman_results.append(result)
 
@@ -59,4 +59,7 @@ class CandleStore:
             k_band_1=settings.K_BAND_1,
             k_band_2=settings.K_BAND_2,
             k_band_3=settings.K_BAND_3,
+            vol_enabled=settings.VOL_ENABLED,
+            vol_beta=settings.VOL_BETA,
+            vol_window=settings.VOL_WINDOW,
         )

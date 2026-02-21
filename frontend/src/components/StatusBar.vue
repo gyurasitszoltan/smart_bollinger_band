@@ -1,12 +1,21 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { KalmanResult } from '../types'
 
-defineProps<{
+const props = defineProps<{
   status: 'connecting' | 'connected' | 'disconnected'
   symbol: string
   interval: string
   lastKalman: KalmanResult | null
 }>()
+
+const volClass = computed(() => {
+  if (!props.lastKalman) return ''
+  const vz = props.lastKalman.vol_z
+  if (vz > 0.5) return 'vol-high'
+  if (vz < -0.5) return 'vol-low'
+  return 'vol-neutral'
+})
 </script>
 
 <template>
@@ -28,6 +37,10 @@ defineProps<{
       <span>K: {{ lastKalman.kalman_gain.toFixed(6) }}</span>
       <span class="sep">|</span>
       <span>P: {{ lastKalman.uncertainty.toExponential(2) }}</span>
+      <span class="sep">|</span>
+      <span :class="volClass">R: {{ lastKalman.effective_r.toExponential(2) }}</span>
+      <span class="sep">|</span>
+      <span :class="volClass">Vz: {{ lastKalman.vol_z.toFixed(2) }}</span>
     </div>
   </div>
 </template>
@@ -104,5 +117,17 @@ b {
 
 .band-3 {
   color: rgba(255, 152, 0, 0.4);
+}
+
+.vol-high {
+  color: #26a69a;
+}
+
+.vol-neutral {
+  color: #888;
+}
+
+.vol-low {
+  color: #ef5350;
 }
 </style>

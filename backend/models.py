@@ -21,6 +21,8 @@ class KalmanResult(BaseModel):
     upper_3: float
     lower_3: float
     kalman_gain: float
+    effective_r: float
+    vol_z: float
 
 
 class SnapshotResponse(BaseModel):
@@ -33,3 +35,6 @@ class SnapshotResponse(BaseModel):
     k_band_1: float
     k_band_2: float
     k_band_3: float
+    vol_enabled: bool
+    vol_beta: float
+    vol_window: int

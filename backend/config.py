@@ -16,6 +16,15 @@ class Settings(BaseSettings):
     K_BAND_2: float = 2.0  # Közepes sáv (±2σ ≈ 95%)
     K_BAND_3: float = 3.0  # Külső sáv (±3σ ≈ 99.7%)
 
+    # Volume-adaptív R_t
+    VOL_ENABLED: bool = True       # Volume hatás be/ki kapcsoló
+    VOL_WINDOW: int = 21           # EMA ablak a log-volume statisztikához
+    VOL_BETA: float = 0.7          # Moduláció erőssége (0 = kikapcsolt)
+    VOL_Z_MAX: float = 3.0         # Z-score clamp határ
+    R_MIN_MULT: float = 0.2        # R_t alsó korlát szorzó
+    R_MAX_MULT: float = 5.0        # R_t felső korlát szorzó
+    VOL_EPS: float = 1e-12         # Numerikus védelem (variancia minimum)
+
     # Server
     HOST: str = "0.0.0.0"
     PORT: int = 8000
