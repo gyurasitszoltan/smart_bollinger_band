@@ -32,6 +32,7 @@ class KalmanFilter:
         vol_z_max: float = 3.0,
         r_min_mult: float = 0.2,
         r_max_mult: float = 5.0,
+        vol_smooth: int = 10,
         vol_eps: float = 1e-12,
     ):
         self.Q = Q
@@ -47,6 +48,7 @@ class KalmanFilter:
         self.r_max_mult = r_max_mult
         self.vol_eps = vol_eps
         self.vol_alpha = 2.0 / (vol_window + 1.0)
+        self.vol_smooth_alpha = 2.0 / (vol_smooth + 1.0)
 
         # Kalman belső állapot
         self.x: float = 0.0
@@ -57,6 +59,7 @@ class KalmanFilter:
         self.vol_ema: float = 0.0
         self.vol_var: float = 1e-6
         self.vol_initialized: bool = False
+        self.z_smooth: float = 0.0
 
     @property
     def initialized(self) -> bool:
@@ -69,6 +72,7 @@ class KalmanFilter:
         self.vol_ema = 0.0
         self.vol_var = 1e-6
         self.vol_initialized = False
+        self.z_smooth = 0.0
 
     def _update_volume_stats(self, volume: float) -> float:
         """
@@ -93,9 +97,13 @@ class KalmanFilter:
         self.vol_var = (1.0 - alpha) * self.vol_var + alpha * (delta * delta)
 
         vol_std = math.sqrt(max(self.vol_var, self.vol_eps))
-        z = (lv - self.vol_ema) / vol_std
+        z_raw = (lv - self.vol_ema) / vol_std
+        z_raw = max(-self.vol_z_max, min(z_raw, self.vol_z_max))
 
-        return max(-self.vol_z_max, min(z, self.vol_z_max))
+        # Második EMA: z-score simítás → R_t tehetetlenebb lesz
+        self.z_smooth += self.vol_smooth_alpha * (z_raw - self.z_smooth)
+
+        return self.z_smooth
 
     def _compute_effective_R(self, vol_z: float) -> float:
         """

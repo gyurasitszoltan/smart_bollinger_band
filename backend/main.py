@@ -33,6 +33,7 @@ kalman = KalmanFilter(
     vol_z_max=settings.VOL_Z_MAX,
     r_min_mult=settings.R_MIN_MULT,
     r_max_mult=settings.R_MAX_MULT,
+    vol_smooth=settings.VOL_SMOOTH,
     vol_eps=settings.VOL_EPS,
 )
 store = CandleStore(kalman=kalman, maxlen=settings.CANDLE_STORE_SIZE)
