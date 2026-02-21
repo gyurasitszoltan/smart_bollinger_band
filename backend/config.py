@@ -6,7 +6,7 @@ class Settings(BaseSettings):
     SYMBOL: str = "BTCUSDT"
     CATEGORY: str = "linear"
     INTERVAL: str = "1"
-    BOOTSTRAP_CANDLES: int = 1000
+    BOOTSTRAP_CANDLES: int = 10000
 
     # Kalman (log-price space — árfüggetlen, minden coinra ugyanaz)
     Q: float = 1e-7       # Folyamatzaj (log-return variancia / lépés)
@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     # Server
     HOST: str = "0.0.0.0"
     PORT: int = 8000
-    CANDLE_STORE_SIZE: int = 800
+    CANDLE_STORE_SIZE: int = 9500
 
 
 settings = Settings()
