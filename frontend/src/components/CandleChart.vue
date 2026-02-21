@@ -27,7 +27,6 @@ let lower2: ISeriesApi<'Line'> | null = null
 let upper3: ISeriesApi<'Line'> | null = null
 let lower3: ISeriesApi<'Line'> | null = null
 let rEffLine: ISeriesApi<'Line'> | null = null
-let lastCandleData: { time: UTCTimestamp; open: number; high: number; low: number; close: number } | null = null
 
 function toSec(ms: number): UTCTimestamp {
   return (ms / 1000) as UTCTimestamp
@@ -124,9 +123,6 @@ function loadSnapshot() {
   }))
 
   candleSeries.setData(candleData)
-  if (candleData.length > 0) {
-    lastCandleData = candleData[candleData.length - 1]
-  }
 
   const toLine = (getter: (k: KalmanResult) => number) =>
     props.kalmanResults.map((k) => ({ time: toSec(k.timestamp), value: getter(k) }))
@@ -157,7 +153,6 @@ watch(
         close: msg.candle.close,
       }
       candleSeries.update(cd)
-      lastCandleData = cd
 
       const t = toSec(msg.kalman.timestamp)
       updateLine(midLine, t, msg.kalman.estimated_price)
@@ -170,12 +165,13 @@ watch(
       updateLine(rEffLine, t, msg.kalman.effective_r)
     }
 
-    if (msg.type === 'tick' && lastCandleData) {
+    if (msg.type === 'tick') {
       candleSeries.update({
-        ...lastCandleData,
-        close: msg.price,
-        high: Math.max(lastCandleData.high, msg.price),
-        low: Math.min(lastCandleData.low, msg.price),
+        time: toSec(msg.candle.timestamp),
+        open: msg.candle.open,
+        high: msg.candle.high,
+        low: msg.candle.low,
+        close: msg.candle.close,
       })
     }
   }

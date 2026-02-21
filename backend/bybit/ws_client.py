@@ -20,7 +20,7 @@ INITIAL_BACKOFF = 1.0
 MAX_BACKOFF = 60.0
 
 OnCandleCallback = Callable[[Candle], Awaitable[None]]
-OnTickCallback = Callable[[float, int], Awaitable[None]]
+OnTickCallback = Callable[["Candle"], Awaitable[None]]
 
 
 class BybitWsClient:
@@ -105,6 +105,13 @@ class BybitWsClient:
                 )
                 await self.on_candle(candle)
             else:
-                price = float(item["close"])
-                ts = int(item["timestamp"])
-                await self.on_tick(price, ts)
+                # Send the full in-progress candle (with candle start time)
+                in_progress = Candle(
+                    timestamp=int(item["start"]),
+                    open=float(item["open"]),
+                    high=float(item["high"]),
+                    low=float(item["low"]),
+                    close=float(item["close"]),
+                    volume=float(item["volume"]),
+                )
+                await self.on_tick(in_progress)

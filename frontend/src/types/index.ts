@@ -45,6 +45,5 @@ export type WsMessage =
     }
   | {
       type: 'tick'
-      price: number
-      timestamp: number
+      candle: Candle
     }

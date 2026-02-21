@@ -70,8 +70,8 @@ async def on_candle(candle: Candle) -> None:
     )
 
 
-async def on_tick(price: float, timestamp: int) -> None:
-    await broadcast({"type": "tick", "price": price, "timestamp": timestamp})
+async def on_tick(candle: Candle) -> None:
+    await broadcast({"type": "tick", "candle": candle.model_dump()})
 
 
 # ── Lifespan ──────────────────────────────────────────────
